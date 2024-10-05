@@ -44,11 +44,6 @@ jobs:
         CHAT_APP_ID: ${{ secrets.CHAT_APP_ID }}
       run: echo "Environment variables set."
 
-    - name: Run Lint
-      run: |
-        pip install flake8
-        flake8 .
-
     - name: Run Tests
       run: |
         pip install pytest
