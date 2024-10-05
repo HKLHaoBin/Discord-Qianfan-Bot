@@ -1,4 +1,5 @@
 #!pip install --upgrade appbuilder-sdk qianfan nest_asyncio discord.py redis
+
 import os
 import re
 import socket
@@ -16,7 +17,7 @@ nest_asyncio.apply()
 QIANFAN_ACCESS_KEY = os.environ["QIANFAN_ACCESS_KEY"]
 QIANFAN_SECRET_KEY = os.environ["QIANFAN_SECRET_KEY"]
 
-# 设置环境中的TOKEN，以下TOKEN请替换为您的个人TOKEN
+# 设置环境中的 TOKEN，以下 TOKEN 请替换为您的个人 TOKEN
 APPBUILDER_TOKEN = os.environ["APPBUILDER_TOKEN"]
 
 # 初始化全局锁
@@ -49,13 +50,13 @@ Post_review = ""
 # 设置日志记录
 logging.basicConfig(level=logging.INFO)
 
-# 你可以在这里设置指定的频道ID
-target_channel_id = 1273112599885647883  # 替换为你的实际频道ID
+# 你可以在这里设置指定的频道 ID
+target_channel_id = 1273112599885647883  # 替换为你的实际频道 ID
 
 
 def get_ip_address():
     hostname = socket.gethostname()  # 获取主机名
-    ip_address = socket.gethostbyname(hostname)  # 获取IP地址
+    ip_address = socket.gethostbyname(hostname)  # 获取 IP 地址
     return ip_address
 
 
@@ -63,7 +64,8 @@ def get_ip_address():
 async def on_ready():
     print(f'We have logged in as {client.user}')
     # 获取指定频道
-    channel = client.get_channel(target_channel_id)
+    # 如果需要发送启动消息，可以取消注释以下两行
+    # channel = client.get_channel(target_channel_id)
     # if channel:
     #     await channel.send("""fairy 启动 ！""")
 
@@ -87,16 +89,18 @@ async def on_message(message):
 
             if "频道id" in user_input:
                 channel_id = message.channel.id
-                await message.channel.send(f"这里的频道ID是：{channel_id}")
+                await message.channel.send(f"这里的频道 ID 是：{channel_id}")
                 return
 
             if "论坛内容" in user_input and "评论内容" in user_input:
-                # 从AppBuilder控制台获取已发布应用的ID
+                # 从 AppBuilder 控制台获取已发布应用的 ID
                 REVIEW_APP_ID = os.environ["REVIEW_APP_ID"]
 
                 try:
                     user_input = user_input.replace("无法判断", "")
-                    app_builder_client = appbuilder.AppBuilderClient(REVIEW_APP_ID)
+                    app_builder_client = appbuilder.AppBuilderClient(
+                        REVIEW_APP_ID
+                    )
                     conversation_id = app_builder_client.create_conversation()
                     resp = app_builder_client.run(conversation_id, user_input)
                     await message.channel.send(resp.content.answer)
@@ -117,27 +121,31 @@ async def on_message(message):
             if "!end!" in user_input:
                 user_input = re.sub(r"!end!", "", user_input).strip()
                 Post_review += user_input
-                # 从AppBuilder控制台获取已发布应用的ID
+                # 从 AppBuilder 控制台获取已发布应用的 ID
                 try:
                     REVIEW_APP_ID = os.environ["REVIEW_APP_ID"]
-                    app_builder_client = appbuilder.AppBuilderClient(REVIEW_APP_ID)
+                    app_builder_client = appbuilder.AppBuilderClient(
+                        REVIEW_APP_ID
+                    )
                     conversation_id = app_builder_client.create_conversation()
                     resp = app_builder_client.run(conversation_id, Post_review)
                     await message.channel.send(resp.content.answer)
                     print(resp.content.answer)
                 except Exception as e:
                     logging.error(f"Failed to process request: {e}")
-                    await message.channel.send(" 艹! 出错了! 联系一下<@1140530007555444797>")
+                    await message.channel.send(
+                        " 艹! 出错了! 联系一下<@1140530007555444797>"
+                    )
                 Post_review = ""
                 return
 
             if "fairy" in user_input or "1275123343376515214" in user_input:
                 if powerOff:
                     if (
-                        (username == "haobinoo" and "启动" in user_input) or
-                        (username == "nahida_buer" and "启动" in user_input) or
-                        (username == "furina1048576" and "启动" in user_input) or
-                        (username == "myitian" and "启动" in user_input)
+                        (username == "haobinoo" and "启动" in user_input)
+                        or (username == "nahida_buer" and "启动" in user_input)
+                        or (username == "furina1048576" and "启动" in user_input)
+                        or (username == "myitian" and "启动" in user_input)
                     ):
                         powerOff = False
                         await message.channel.send("我的好主人，我回来了！")
@@ -145,13 +153,17 @@ async def on_message(message):
                     await message.channel.send(
                         f"Fairy已因 @{powerOff_user} 说了 '{powerOff_user_input}' 导致关闭，"
                         f"现无法回答问题，请等待 <@1140530007555444797> "
-                        f"<@1165292898699464725> <@1130876908750512228> <@964838656420491285>。"
+                        f"<@1165292898699464725> <@1130876908750512228> "
+                        f"<@964838656420491285>。"
                     )
                     return
 
                 if any(
                     word in user_input
-                    for word in ["再见！", "滚！", "拜拜！", "离开！", "关闭！", "sb!", "关机！", "智障！"]
+                    for word in [
+                        "再见！", "滚！", "拜拜！", "离开！", "关闭！",
+                        "sb!", "关机！", "智障！"
+                    ]
                 ):
                     await message.channel.send("再见！")
                     powerOff_user = username
@@ -192,17 +204,20 @@ async def on_message(message):
                 await message.channel.send(response)
     except Exception as e:
         logging.error(
-            f"Error occurred while processing message: {message.content}, error: {e}"
+            f"Error occurred while processing message: {message.content}, "
+            f"error: {e}"
         )
 
 
 async def make_qianfan_request(username, user_input):
     try:
-        # 从AppBuilder控制台获取已发布应用的ID
+        # 从 AppBuilder 控制台获取已发布应用的 ID
         CHAT_APP_ID = os.environ["CHAT_APP_ID"]
 
         app_builder_client = appbuilder.AppBuilderClient(CHAT_APP_ID)
-        conversation_id = await asyncio.to_thread(app_builder_client.create_conversation)
+        conversation_id = await asyncio.to_thread(
+            app_builder_client.create_conversation
+        )
         resp = await asyncio.to_thread(
             app_builder_client.run, conversation_id, user_input
         )
@@ -229,5 +244,5 @@ async def on_error(event, *args, **kwargs):
         logging.error(f"Reconnection failed: {e}")
 
 
-# 启动Bot
+# 启动 Bot
 asyncio.run(main())
