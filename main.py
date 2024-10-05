@@ -6,7 +6,6 @@ import socket
 import qianfan
 import discord
 import asyncio
-import nest_asyncio
 import appbuilder
 import logging
 
@@ -75,12 +74,12 @@ async def on_message(message):
             username = str(message.author)
             user_input = message.content.lower()
             print(username, user_input)
-            
+
             if "频道id" in user_input:
                 channel_id = message.channel.id
                 await message.channel.send(f"这里的频道ID是：{channel_id}")
                 return
-            
+
             if "论坛内容" in user_input and "评论内容" in user_input:
                 REVIEW_APP_ID = os.environ["REVIEW_APP_ID"]
 
@@ -100,7 +99,7 @@ async def on_message(message):
                 Post_review += user_input
                 await message.channel.send("继续")
                 return
-                
+
             if "!end!" in user_input:
                 user_input = re.sub(r"!end!", "", user_input).strip()
                 Post_review += user_input
@@ -119,23 +118,23 @@ async def on_message(message):
 
             if "fairy" in user_input or "1275123343376515214" in user_input:
                 if powerOff:
-                    if username == "haobinoo" and "启动" in user_input or "nahida_buer" and "启动" in user_input or "furina1048576" and "启动" in user_input or "myitian" and "启动" in user_input:
+                    if username in ["haobinoo", "nahida_buer", "furina1048576", "myitian"] and "启动" in user_input:
                         powerOff = False
                         await message.channel.send("我的好主人，我回来了！")
                         return
                     await message.channel.send(f"Fairy已因 @{powerOff_user} 说了 '{powerOff_user_input}' 导致关闭，现无法回答问题，请等待 <@1140530007555444797> <@1165292898699464725> <@1130876908750512228> <@964838656420491285>。")
                     return
 
-                if any(word in user_input for word in ["再见！", "滚！", "拜拜！", "离开！", "关闭！", "sb!", "关机！" , "智障！"]):
+                if any(word in user_input for word in ["再见！", "滚！", "拜拜！", "离开！", "关闭！", "sb!", "关机！", "智障！"]):
                     await message.channel.send("再见！")
                     powerOff_user = username
                     powerOff_user_input = user_input
                     powerOff = True
                     return
-                
+
                 if username == "haobinoo" and "ip" in user_input:
                     ip = get_ip_address()
-                    await message.channel.send("我的好主人，我在这里：" +ip)
+                    await message.channel.send("我的好主人，我在这里：" + ip)
                     return
 
                 # 定义正则表达式
@@ -146,14 +145,14 @@ async def on_message(message):
                     # 查找符合两种模式的内容
                     match1 = re.search(pattern1, text)
                     match2 = re.search(pattern2, text)
-                    
+
                     # 如果匹配成功则打印
                     if match1:
                         print(f"匹配到 'str + str + int' 的字符串: {text}")
                     if match2:
                         print(f"匹配到 '@ + int' 的字符串: {text}")
+
                 # 发起对话请求
-                # Remove all patterns like <@userID>
                 user_input = re.sub(r"<@\d+>|<[a-zA-Z]+:[a-zA-Z]+:\d+>|<:[a-zA-Z]+:\d+>", "", user_input).strip()
                 print("过滤后：", user_input)
                 response = await make_qianfan_request(username, user_input)
@@ -161,9 +160,9 @@ async def on_message(message):
                 await message.channel.send(response)
     except Exception as e:
         logging.error(f"Error occurred while processing message: {message.content}, error: {e}")
+
 async def make_qianfan_request(username, user_input):
     try:
-        # 从AppBuilder控制台【个人空间】-【应用】网页获取已发布应用的ID
         CHAT_APP_ID = os.environ["CHAT_APP_ID"]
 
         app_builder_client = appbuilder.AppBuilderClient(CHAT_APP_ID)
@@ -176,10 +175,9 @@ async def make_qianfan_request(username, user_input):
         return content
 
     except Exception as e:
-        # 记录错误并返回默认消息
         logging.error(f"Error during Qianfan API request: {e}")
         return "等待，发生了错误。"
-        
+
 @client.event
 async def on_error(event, *args, **kwargs):
     logging.error(f"Error occurred in {event}: {args} - {kwargs}")
