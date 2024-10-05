@@ -1,4 +1,5 @@
 #!pip install --upgrade appbuilder-sdk qianfan nest_asyncio discord.py redis
+# 必须放置在文件顶部
 import os
 import re
 import socket
@@ -7,18 +8,14 @@ import discord
 import asyncio
 import nest_asyncio
 import appbuilder
-print(dir(appbuilder))
 import logging
-nest_asyncio.apply()
-
 
 # 设置环境变量以进行认证
-QIANFAN_ACCESS_KEY=os.environ["QIANFAN_ACCESS_KEY"]
-QIANFAN_SECRET_KEY=os.environ["QIANFAN_SECRET_KEY"]
+QIANFAN_ACCESS_KEY = os.environ["QIANFAN_ACCESS_KEY"]
+QIANFAN_SECRET_KEY = os.environ["QIANFAN_SECRET_KEY"]
 
-# 设置环境中的TOKEN，以下TOKEN请替换为您的个人TOKEN，个人TOKEN可通过该页面【获取鉴权参数】或控制台页【密钥管理】处获取
-APPBUILDER_TOKEN=os.environ["APPBUILDER_TOKEN"]
-
+# 设置环境中的TOKEN，以下TOKEN请替换为您的个人TOKEN
+APPBUILDER_TOKEN = os.environ["APPBUILDER_TOKEN"]
 
 # 初始化全局锁
 lock = asyncio.Lock()
@@ -28,6 +25,7 @@ chat_comp = qianfan.ChatCompletion()
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
+
 async def main():
     try:
         await client.start(APPBUILDER_TOKEN)
@@ -37,16 +35,16 @@ async def main():
         logging.error(f'HTTP Exception occurred: {e}')
     except Exception as e:
         logging.error(f'Unexpected error: {e}')
-        
+
 powerOff = False
 powerOff_user = ""
 powerOff_user_input = ""
-
 Post_review = ""
 
 # 设置日志记录
 logging.basicConfig(level=logging.INFO)
-# 你可以在这里设置指定的频道ID 
+
+# 设置指定的频道ID 
 target_channel_id = 1273112599885647883  # 替换为你的实际频道ID
 
 def get_ip_address():
@@ -57,10 +55,7 @@ def get_ip_address():
 @client.event
 async def on_ready():
     print(f'We have logged in as {client.user}')
-    # 获取指定频道
-    channel = client.get_channel(target_channel_id)
-    #if channel:
-    #    await channel.send("""fairy 启动 ！""")
+
 @client.event
 async def on_disconnect():
     logging.warning('Bot has disconnected.')
@@ -68,11 +63,12 @@ async def on_disconnect():
 @client.event
 async def on_error(event, *args, **kwargs):
     logging.error(f'Error occurred in {event}: {args} - {kwargs}')
+
 @client.event
 async def on_message(message):
     try:
         async with lock:  # 使用锁来确保并发调用不会发生
-            global powerOff, powerOff_user, powerOff_user_input , Post_review
+            global powerOff, powerOff_user, powerOff_user_input, Post_review
             if message.author == client.user:
                 return
 
@@ -80,14 +76,12 @@ async def on_message(message):
             user_input = message.content.lower()
             print(username, user_input)
             
-            
             if "频道id" in user_input:
                 channel_id = message.channel.id
                 await message.channel.send(f"这里的频道ID是：{channel_id}")
                 return
             
             if "论坛内容" in user_input and "评论内容" in user_input:
-                # 从AppBuilder控制台【个人空间】-【应用】网页获取已发布应用的ID
                 REVIEW_APP_ID = os.environ["REVIEW_APP_ID"]
 
                 try:
@@ -96,31 +90,27 @@ async def on_message(message):
                     conversation_id = app_builder_client.create_conversation()
                     resp = app_builder_client.run(conversation_id, user_input)
                     await message.channel.send(resp.content.answer)
-                    print(resp.content.answer)
                 except Exception as e:
                     logging.error(f"API request failed: {e}")
                     await message.channel.send("等待，发生了错误。")
                 return
-            
+
             if "!wait!" in user_input:
-                    user_input = re.sub(r"!wait!", "", user_input).strip()
-                    Post_review += user_input
-                    print(Post_review)
-                    await message.channel.send("继续")
-                    print("继续")
-                    return
+                user_input = re.sub(r"!wait!", "", user_input).strip()
+                Post_review += user_input
+                await message.channel.send("继续")
+                return
                 
             if "!end!" in user_input:
                 user_input = re.sub(r"!end!", "", user_input).strip()
                 Post_review += user_input
-                # 从AppBuilder控制台【个人空间】-【应用】网页获取已发布应用的ID
+
                 try:
                     REVIEW_APP_ID = os.environ["REVIEW_APP_ID"]
                     app_builder_client = appbuilder.AppBuilderClient(REVIEW_APP_ID)
                     conversation_id = app_builder_client.create_conversation()
                     resp = app_builder_client.run(conversation_id, Post_review)
                     await message.channel.send(resp.content.answer)
-                    print(resp.content.answer)
                 except Exception as e:
                     logging.error(f"Failed to process request: {e}")
                     await message.channel.send(" 艹! 出错了! 联系一下<@1140530007555444797>")
