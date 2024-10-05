@@ -88,11 +88,11 @@ async def on_message(message):
             
             if "论坛内容" in user_input and "评论内容" in user_input:
                 # 从AppBuilder控制台【个人空间】-【应用】网页获取已发布应用的ID
-                Review_app_id = os.environ["Review_app_id"]
+                REVIEW_APP_ID = os.environ["REVIEW_APP_ID"]
 
                 try:
                     user_input = user_input.replace("无法判断", "")
-                    app_builder_client = appbuilder.AppBuilderClient(Review_app_id)
+                    app_builder_client = appbuilder.AppBuilderClient(REVIEW_APP_ID)
                     conversation_id = app_builder_client.create_conversation()
                     resp = app_builder_client.run(conversation_id, user_input)
                     await message.channel.send(resp.content.answer)
@@ -115,8 +115,8 @@ async def on_message(message):
                 Post_review += user_input
                 # 从AppBuilder控制台【个人空间】-【应用】网页获取已发布应用的ID
                 try:
-                    Review_app_id = os.environ["Review_app_id"]
-                    app_builder_client = appbuilder.AppBuilderClient(Review_app_id)
+                    REVIEW_APP_ID = os.environ["REVIEW_APP_ID"]
+                    app_builder_client = appbuilder.AppBuilderClient(REVIEW_APP_ID)
                     conversation_id = app_builder_client.create_conversation()
                     resp = app_builder_client.run(conversation_id, Post_review)
                     await message.channel.send(resp.content.answer)
@@ -174,9 +174,9 @@ async def on_message(message):
 async def make_qianfan_request(username, user_input):
     try:
         # 从AppBuilder控制台【个人空间】-【应用】网页获取已发布应用的ID
-        Chat_app_id = os.environ["Chat_app_id"]
+        CHAT_APP_ID = os.environ["CHAT_APP_ID"]
 
-        app_builder_client = appbuilder.AppBuilderClient(Chat_app_id)
+        app_builder_client = appbuilder.AppBuilderClient(CHAT_APP_ID)
         conversation_id = await asyncio.to_thread(app_builder_client.create_conversation)
         resp = await asyncio.to_thread(app_builder_client.run, conversation_id, user_input)
         content = resp.content.answer
