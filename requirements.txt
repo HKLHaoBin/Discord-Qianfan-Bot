@@ -1,0 +1,7 @@
+appbuilder-sdk
+qianfan
+nest_asyncio
+discord.py
+redis
+flake8
+pytest # optional, for running tests
