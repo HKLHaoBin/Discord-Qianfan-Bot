@@ -1,4 +1,4 @@
-name: Discord Bot CI/CD Pipeline
+name: Discord + Qianfan Bot CI/CD
 
 on:
   push:
@@ -21,14 +21,6 @@ jobs:
       with:
         python-version: '3.9'
 
-    - name: Cache dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -40,9 +32,19 @@ jobs:
         QIANFAN_ACCESS_KEY: ${{ secrets.QIANFAN_ACCESS_KEY }}
         QIANFAN_SECRET_KEY: ${{ secrets.QIANFAN_SECRET_KEY }}
         APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
-        REVIEW_APP_ID: ${{ secrets.REVIEW_APP_ID }}
-        CHAT_APP_ID: ${{ secrets.CHAT_APP_ID }}
+        Review_app_id: ${{ secrets.REVIEW_APP_ID }}
+        Chat_app_id: ${{ secrets.CHAT_APP_ID }}
       run: echo "Environment variables set."
+
+    - name: Run Discord Bot (Check Build)
+      env:
+        QIANFAN_ACCESS_KEY: ${{ secrets.QIANFAN_ACCESS_KEY }}
+        QIANFAN_SECRET_KEY: ${{ secrets.QIANFAN_SECRET_KEY }}
+        APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
+        Review_app_id: ${{ secrets.REVIEW_APP_ID }}
+        Chat_app_id: ${{ secrets.CHAT_APP_ID }}
+      run: |
+        python mian.py
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,17 +53,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-
-    - name: Install dependencies
+    - name: Deploy to Production
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install appbuilder-sdk qianfan nest_asyncio discord.py redis
-
-    - name: Notify Success
-      if: success()
-      run: echo "Deployment successful!"
+        echo "Deploying..."
+        # Add your deployment script here
