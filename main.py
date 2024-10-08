@@ -1,3 +1,4 @@
+#main.py
 #!pip install --upgrade appbuilder-sdk qianfan nest_asyncio discord.py redis
 import os
 import re
@@ -18,7 +19,7 @@ QIANFAN_SECRET_KEY=os.environ["QIANFAN_SECRET_KEY"]
 
 # 设置环境中的TOKEN，以下TOKEN请替换为您的个人TOKEN，个人TOKEN可通过该页面【获取鉴权参数】或控制台页【密钥管理】处获取
 APPBUILDER_TOKEN=os.environ["APPBUILDER_TOKEN"]
-
+DISCORD_TOKEN=os.environ["DISCORD_TOKEN"]
 
 # 初始化全局锁
 lock = asyncio.Lock()
@@ -30,7 +31,7 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 async def main():
     try:
-        await client.start(APPBUILDER_TOKEN)
+        await client.start(DISCORD_TOKEN)
     except discord.errors.LoginFailure as e:
         logging.error(f'Login failed: {e}')
     except discord.errors.HTTPException as e:
@@ -196,7 +197,7 @@ async def on_error(event, *args, **kwargs):
     await asyncio.sleep(5)  # 延时重连，防止无限循环重连
     try:
         await client.close()  # 关闭当前连接
-        await client.start(APPBUILDER_TOKEN)  # 重新启动 bot
+        await client.start(DISCORD_TOKEN)  # 重新启动 bot
     except Exception as e:
         logging.error(f"Reconnection failed: {e}")
 
