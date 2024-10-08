@@ -22,7 +22,7 @@
 
    首先安装必要的依赖包：
    ```shell
-   #!pip install --upgrade appbuilder-sdk qianfan nest_asyncio discord.py redis
+   #!pip install --upgrade appbuilder-sdk qianfan nest_asyncio discord.py redis pyarrow
    ```
 
 2. **环境变量配置**
