@@ -44,7 +44,7 @@ jobs:
         Review_app_id: ${{ secrets.REVIEW_APP_ID }}
         Chat_app_id: ${{ secrets.CHAT_APP_ID }}
       run: |
-        python mian.py
+        python main.py
 
   deploy:
     runs-on: ubuntu-latest
