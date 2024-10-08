@@ -32,8 +32,9 @@ jobs:
         QIANFAN_ACCESS_KEY: ${{ secrets.QIANFAN_ACCESS_KEY }}
         QIANFAN_SECRET_KEY: ${{ secrets.QIANFAN_SECRET_KEY }}
         APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
-        Review_app_id: ${{ secrets.REVIEW_APP_ID }}
-        Chat_app_id: ${{ secrets.CHAT_APP_ID }}
+        REVIEW_APP_ID: ${{ secrets.REVIEW_APP_ID }}
+        CHAT_APP_ID: ${{ secrets.CHAT_APP_ID }}
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       run: echo "Environment variables set."
 
     - name: Run Discord Bot (Check Build)
@@ -41,8 +42,9 @@ jobs:
         QIANFAN_ACCESS_KEY: ${{ secrets.QIANFAN_ACCESS_KEY }}
         QIANFAN_SECRET_KEY: ${{ secrets.QIANFAN_SECRET_KEY }}
         APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
-        Review_app_id: ${{ secrets.REVIEW_APP_ID }}
-        Chat_app_id: ${{ secrets.CHAT_APP_ID }}
+        REVIEW_APP_ID: ${{ secrets.REVIEW_APP_ID }}
+        CHAT_APP_ID: ${{ secrets.CHAT_APP_ID }}
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       run: |
         python main.py
 
