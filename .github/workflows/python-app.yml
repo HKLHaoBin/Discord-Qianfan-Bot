@@ -61,9 +61,10 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         port: 22
         script: |
-          cd /home/user/Discord-Qianfan-Bot
+          cd /home/haobin/Discord-Qianfan-Bot
           git pull origin main
           docker-compose down && docker-compose up -d
+        debug: true  # 开启调试模式以便获取更多信息
 
     - name: Notify Success
       if: success()
