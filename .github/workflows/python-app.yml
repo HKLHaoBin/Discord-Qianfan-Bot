@@ -61,7 +61,7 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         port: 22
         script: |
-          cd /path/to/your/app
+          cd /home/user/Discord-Qianfan-Bot
           git pull origin main
           docker-compose down && docker-compose up -d
 
