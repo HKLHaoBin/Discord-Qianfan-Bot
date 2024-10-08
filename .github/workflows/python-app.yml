@@ -35,6 +35,15 @@ jobs:
         pip install -r requirements.txt
         pip install appbuilder-sdk qianfan nest_asyncio discord.py redis
 
+    - name: Set environment variables
+      env:
+        QIANFAN_ACCESS_KEY: ${{ secrets.QIANFAN_ACCESS_KEY }}
+        QIANFAN_SECRET_KEY: ${{ secrets.QIANFAN_SECRET_KEY }}
+        APPBUILDER_TOKEN: ${{ secrets.APPBUILDER_TOKEN }}
+        REVIEW_APP_ID: ${{ secrets.REVIEW_APP_ID }}
+        CHAT_APP_ID: ${{ secrets.CHAT_APP_ID }}
+      run: echo "Environment variables set."
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -52,17 +61,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install appbuilder-sdk qianfan nest_asyncio discord.py redis
-
-    - name: Deploy to Production Server via SSH
-      uses: appleboy/ssh-action@v0.1.2
-      with:
-        key: ${{ secrets.SERVER_SSH_KEY }}
-        port: 22
-        script: |
-          cd /home/haobin/Discord-Qianfan-Bot
-          git pull origin main
-          docker-compose down && docker-compose up -d
-        debug: true  # 开启调试模式以便获取更多信息
 
     - name: Notify Success
       if: success()
